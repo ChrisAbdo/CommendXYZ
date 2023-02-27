@@ -282,7 +282,7 @@ export default function CreateProfile() {
               Notifications
             </h3>
             <p className="mt-1 text-sm text-gray-500">
-              Decide which communications you'd like to receive and how.
+              Decide which communications youd like to receive and how.
             </p>
           </div>
           <div className="mt-5 space-y-6 md:col-span-2 md:mt-0">
