@@ -30,12 +30,13 @@ import {
   UserPlusIcon,
 } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 
 const products = [
   {
     name: "Give Commend",
     description: "Give commend to any wallet address",
-    href: "#",
+    href: "/give-commend",
     icon: ChartPieIcon,
   },
   {
@@ -61,6 +62,7 @@ function classNames(...classes: any[]) {
 }
 
 export default function Navbar() {
+  const address = useAddress();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -86,7 +88,7 @@ export default function Navbar() {
           </button> */}
           <Menu as="div" className="relative inline-block text-left">
             <div>
-              <Menu.Button className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+              <Menu.Button className="inline-flex w-full justify-center rounded-md  bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
                 <Bars3Icon className="h-6 w-6" aria-hidden="true" />
               </Menu.Button>
             </div>
@@ -117,7 +119,13 @@ export default function Navbar() {
                           className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                           aria-hidden="true"
                         />
-                        Connect Wallet
+                        {address ? (
+                          <span className="truncate">
+                            {address.slice(0, 5)}...{address.slice(-4)}
+                          </span>
+                        ) : (
+                          <span>Connect Wallet</span>
+                        )}
                       </a>
                     )}
                   </Menu.Item>
@@ -248,7 +256,7 @@ export default function Navbar() {
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
           <Popover className="relative">
-            <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
+            <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-black hover:text-black/80">
               Commend
               <ChevronDownIcon
                 className="h-5 w-5 flex-none text-gray-400"
@@ -279,13 +287,13 @@ export default function Navbar() {
                         />
                       </div>
                       <div className="flex-auto">
-                        <a
+                        <Link
                           href={item.href}
                           className="block font-semibold text-gray-900"
                         >
                           {item.name}
                           <span className="absolute inset-0" />
-                        </a>
+                        </Link>
                         <p className="mt-1 text-gray-600">{item.description}</p>
                       </div>
                     </div>
@@ -312,14 +320,14 @@ export default function Navbar() {
 
           <Link
             href="/discover"
-            className="text-sm font-semibold leading-6 text-gray-900"
+            className="text-sm font-semibold leading-6 text-black hover:text-black/80"
           >
             Discover
           </Link>
 
           <Link
             href="/create-profile"
-            className="text-sm font-semibold leading-6 text-gray-900"
+            className="text-sm font-semibold leading-6 text-black hover:text-black/80"
           >
             Create Profile
           </Link>
@@ -336,7 +344,13 @@ export default function Navbar() {
             <span className="absolute bottom-0 left-0 w-full h-0 transition-all duration-300 delay-200 bg-indigo-600 group-hover:h-full ease"></span>
             <span className="absolute inset-0 w-full h-full duration-300 delay-300 bg-indigo-600 opacity-0 group-hover:opacity-100"></span>
             <span className="relative transition-colors duration-300 delay-200 group-hover:text-white ease">
-              Connect Wallet
+              {address ? (
+                <span className="truncate">
+                  {address.slice(0, 5)}...{address.slice(-4)}
+                </span>
+              ) : (
+                <span>Connect Wallet</span>
+              )}
             </span>
           </button>
         </div>
@@ -477,13 +491,14 @@ export default function Navbar() {
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6">
-                    <button
+                    {/* <button
                       type="button"
                       className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
                       onClick={() => setOpen(false)}
                     >
                       Go back to dashboard
-                    </button>
+                    </button> */}
+                    <ConnectWallet accentColor="#4f46e5" />
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
