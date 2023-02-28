@@ -47,6 +47,7 @@ export default function Discover() {
     query === ""
       ? nfts
       : nfts.filter((item) =>
+          // @ts-ignore
           item.walletAddress.toLowerCase().includes(query.toLowerCase())
         );
 
@@ -115,16 +116,20 @@ export default function Discover() {
   async function handleGiveHeat(nfts: any) {
     // Get an instance of the Radio contract
     try {
+      // @ts-ignore
       const web3 = new Web3(window.ethereum);
       const networkId = await web3.eth.net.getId();
       const radioContract = new web3.eth.Contract(
+        // @ts-ignore
         Commend.abi,
+        // @ts-ignore
         Commend.networks[networkId].address
       );
 
       radioContract.methods
         .giveCommend(nfts.tokenId, 1, "Test21")
         .send({
+          // @ts-ignore
           from: window.ethereum.selectedAddress,
 
           value: web3.utils.toWei("0.1", "ether"),
@@ -206,12 +211,14 @@ export default function Discover() {
                       <div className="flex-shrink-0">
                         <img
                           className="h-8 w-8 rounded-full"
+                          // @ts-ignore
                           src={nft.coverImage}
                           alt=""
                         />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-gray-900">
+                          {/* @ts-ignore */}
                           {nft.walletAddress}
                         </p>
                         {/* <p className="truncate text-sm text-gray-500">{'@' + person.handle}</p> */}
@@ -225,6 +232,7 @@ export default function Discover() {
                           {nft.commendCount}
                         </span>
                         <span className="text-xs text-gray-400 ml-1">
+                          {/* @ts-ignore */}
                           {nft.description}
                         </span>
                         <button
@@ -257,7 +265,7 @@ export default function Discover() {
 
                 // map with 5 items please
                 [...Array(5)].map((_, index) => (
-                  <li className="py-4">
+                  <li className="py-4" key={index}>
                     <div className="flex items-center space-x-4">
                       <div className="flex-shrink-0">
                         <div className="bg-gray-200 w-8 h-8 animate-pulse rounded-full"></div>
