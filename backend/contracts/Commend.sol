@@ -13,6 +13,8 @@ contract Commend is ReentrancyGuard {
     mapping(uint256 => NFT) private _idToNFT;
     mapping(address => bool) private _hasListedNft;
     mapping(address => uint256) private _sellerCommendCounts;
+    mapping(address => bool) private _hasGivenCommendation;
+    mapping(uint256 => address[]) private _nftCommendations;
 
     struct NFT {
         address nftContract;
@@ -22,6 +24,7 @@ contract Commend is ReentrancyGuard {
         bool listed;
         uint256 commendCount;
         string[] descriptions;
+        string[] addressCommender;
     }
 
     event NFTListed(
@@ -48,7 +51,8 @@ contract Commend is ReentrancyGuard {
     function giveCommend(
         uint256 _tokenId,
         uint256 _commendCount,
-        string memory _description
+        string memory _description,
+        string memory _addressCommender
     ) public payable {
         // Ensure that the NFT exists and is listed
         NFT storage nft = _idToNFT[_tokenId];
@@ -57,11 +61,15 @@ contract Commend is ReentrancyGuard {
         // send the heat to the seller of the NFT
         require(payable((nft.seller)).send(_commendCount), "Transfer failed");
 
-        // Increment the commendCount of the NFT by the given amount
-        nft.commendCount += _commendCount;
-
         // Append the new description to the existing array of descriptions
         nft.descriptions.push(_description);
+        nft.addressCommender.push(_addressCommender);
+
+        // Append the address of the user who gave the commendation to the _nftCommendations array
+        _nftCommendations[_tokenId].push(msg.sender);
+
+        // Increment the commendCount of the NFT by the given amount
+        nft.commendCount += _commendCount;
     }
 
     // function to send commend to the owner of the NFTs, respectivly
@@ -99,6 +107,7 @@ contract Commend is ReentrancyGuard {
             payable(address(this)),
             true,
             0,
+            new string[](0),
             new string[](0)
         );
 

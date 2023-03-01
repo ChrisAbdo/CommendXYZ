@@ -1,3 +1,5 @@
+import { useAddress } from "@thirdweb-dev/react";
+
 import React from "react";
 import Image from "next/image";
 import Web3 from "web3";
@@ -54,13 +56,15 @@ function classNames(...classes: any[]) {
 }
 
 export default function Discover() {
+  const address = useAddress();
   const [nfts, setNfts] = React.useState([]);
   const [commendCount, setCommendCount] = React.useState(0);
   const [commendDescription, setCommendDescription] = React.useState("");
+  const [commendAddress, setCommendAddress] = React.useState("");
   const [query, setQuery] = React.useState("");
   const [roleQuery, setRoleQuery] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-
+  const [isValid, setIsValid] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [selectedNFT, setSelectedNFT] = React.useState(null);
   const [selectedNFTCommends, setSelectedNFTCommends] = React.useState(null);
@@ -126,6 +130,8 @@ export default function Discover() {
           const tokenURI = await NFTContract.methods.tokenURI(i.tokenId).call();
           const meta = await axios.get(tokenURI);
           const descriptions = i.descriptions;
+          const commendationAddresses = i.addressCommender;
+          const commendations = i.commendations; // Retrieve the commendations array from the smart contract
 
           const nft = {
             tokenId: i.tokenId,
@@ -136,6 +142,8 @@ export default function Discover() {
             coverImage: meta.data.coverImage,
             commendCount: i.commendCount,
             description: descriptions,
+            commendAddress: commendationAddresses,
+            commendations: commendations, // Include the commendations array in the metadata for the NFT
           };
           return nft;
         } catch (err) {
@@ -175,7 +183,7 @@ export default function Discover() {
       );
 
       radioContract.methods
-        .giveCommend(nfts.tokenId, 1, commendDescription)
+        .giveCommend(nfts.tokenId, 1, commendDescription, commendAddress)
         .send({
           // @ts-ignore
           from: window.ethereum.selectedAddress,
@@ -195,13 +203,22 @@ export default function Discover() {
     }
   }
 
-  async function setQueryBySelect(select: any) {
+  function setQueryBySelect(select: any) {
     setQuery(select);
     toast({
       // title: "Filtered by " + select,
       // do the same thing but if select is empty, then say "All"
       title: select ? "Filtered by " + select : "Showing all",
     });
+  }
+
+  function handleInput(event: any) {
+    if (event.target === address) {
+      // only validate if name is "walletAddress"
+      setIsValid(true);
+    } else {
+      setIsValid(false);
+    }
   }
 
   return (
@@ -353,7 +370,7 @@ export default function Discover() {
 
         {roleQuery ? (
           <div className="mt-4">
-            <span className="inline-flex items-center rounded-md bg-indigo-100 border border-indigo-200 py-0.5 pl-2.5 pr-1 text-sm font-medium text-black">
+            <span className="inline-flex items-center rounded-md bg-indigo-100 border border-indigo-200 py-0.5 pl-2.5 pr-1 text-sm font-medium text-indigo-600">
               {roleQuery}
               <button
                 type="button"
@@ -485,10 +502,10 @@ export default function Discover() {
                                       <Image
                                         // @ts-ignore
                                         src={nft.coverImage}
-                                        width={50}
+                                        width={300}
                                         height={50}
                                         alt="cover"
-                                        className="rounded-full"
+                                        className="rounded-md w-full"
                                       />
                                     </div>
                                     <div className="mt-3 text-center sm:mt-5">
@@ -535,6 +552,23 @@ export default function Discover() {
                                               (desc: any, index: any) => (
                                                 <React.Fragment key={index}>
                                                   <div className="w-full bg-gray-100 transition duration-2 hover:bg-gray-200 rounded-lg p-2">
+                                                    <p className="text-xs text-gray-500">
+                                                      {/* {
+                                                        nft.commendAddress[
+                                                          index
+                                                        ]
+                                                      } */}
+                                                      {/* slice the commendaddress */}
+                                                      From: {/* @ts-ignore */}
+                                                      {nft.commendAddress[
+                                                        index
+                                                      ].slice(0, 5) +
+                                                        "..." +
+                                                        // @ts-ignore
+                                                        nft.commendAddress[
+                                                          index
+                                                        ].slice(-4)}
+                                                    </p>
                                                     <p className="text-sm text-gray-900">
                                                       {desc}
                                                     </p>
@@ -542,7 +576,7 @@ export default function Discover() {
                                                   {index <
                                                     // @ts-ignore
                                                     nft.description.length -
-                                                      1 && <br />}{" "}
+                                                      1 && <br />}
                                                 </React.Fragment>
                                               )
                                             )}
@@ -660,6 +694,62 @@ export default function Discover() {
                                                 )
                                               }
                                             />
+                                          </div>
+
+                                          <div className="mt-2">
+                                            <div>
+                                              <label
+                                                htmlFor="email"
+                                                className="block text-sm font-medium text-gray-700"
+                                              >
+                                                Confirm your wallet address
+                                              </label>
+                                              <div className="mt-1">
+                                                {/* <input
+                                                  type="email"
+                                                  name="email"
+                                                  id="email"
+                                                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                  placeholder="0x..."
+                                                  onChange={(event) =>
+                                                    setCommendAddress(
+                                                      event.target.value
+                                                    )
+                                                  }
+                                                /> */}
+                                                <input
+                                                  type="text"
+                                                  name="name"
+                                                  id="name"
+                                                  autoComplete="off"
+                                                  pattern={address}
+                                                  className="valid:[&:not(:placeholder-shown)]:border-green-500 [&:not(:placeholder-shown):not(:focus):invalid~span]:block invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-400 block w-full flex-1 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                  placeholder="0x..."
+                                                  required
+                                                  title="Input value must be equal to your wallet address."
+                                                  onInput={handleInput}
+                                                  onChange={(e) => {
+                                                    setCommendAddress(
+                                                      e.target.value
+                                                    );
+                                                    handleInput(e);
+                                                  }}
+                                                />
+                                                {isValid ? (
+                                                  <span className="mt-2 text-sm text-green-500">
+                                                    You have been correctly
+                                                    identified as the owner of
+                                                    this wallet.
+                                                  </span>
+                                                ) : (
+                                                  <span className="mt-2 hidden text-sm text-red-400">
+                                                    Please enter your wallet
+                                                    address. (you should be
+                                                    connected to this wallet){" "}
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </div>
                                           </div>
                                         </div>
                                       </div>

@@ -247,7 +247,7 @@ export default function CreateProfile() {
                     className="valid:[&:not(:placeholder-shown)]:border-green-500 [&:not(:placeholder-shown):not(:focus):invalid~span]:block invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-400 block w-full flex-1 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     placeholder="0x..."
                     required
-                    title="Input value must be equal to 0x123..."
+                    title="Input value must be equal to your wallet address."
                     onInput={handleInput}
                     onChange={(e) => {
                       updateFormInput({
