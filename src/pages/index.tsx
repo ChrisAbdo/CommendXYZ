@@ -16,7 +16,7 @@ const variants = {
     opacity: 1,
     y: 0,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.4,
       duration: 0.5,
     },
   },
@@ -108,7 +108,10 @@ export default function Home() {
                   you to build trust with your community.
                 </motion.p>
 
-                <div className="mt-10 flex items-center justify-center gap-x-6">
+                <motion.div
+                  variants={itemVariants}
+                  className="mt-10 flex items-center justify-center gap-x-6"
+                >
                   <Button variant="default">
                     <Link href="/create-profile">Get started</Link>
                   </Button>
@@ -118,7 +121,7 @@ export default function Home() {
                   >
                     Learn more <span aria-hidden="true">→</span>
                   </a>
-                </div>
+                </motion.div>
               </motion.div>
             </div>
             <div className="mt-16 flow-root sm:mt-24">
@@ -246,6 +249,7 @@ export default function Home() {
                       transition={{ duration: 0.5, delay: 0.6 }}
                       animate="visible"
                       initial="hidden"
+                      // @ts-ignore
                       staggerChildren={0.2}
                     >
                       {features.map((feature) => (
