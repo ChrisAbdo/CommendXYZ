@@ -36,19 +36,19 @@ const products = [
   {
     name: "Give Commend",
     description: "Give commend to any wallet address",
-    href: "/give-commend",
+    href: "/commend",
     icon: ChartPieIcon,
   },
   {
     name: "Receive Commend",
     description: "Receive commend from any wallet address",
-    href: "#",
+    href: "/receive-commend",
     icon: CursorArrowRaysIcon,
   },
   {
-    name: "Commend History",
-    description: "View your commend history",
-    href: "#",
+    name: "Discover Commended Wallets",
+    description: "View all the users that have been commended",
+    href: "/commend",
     icon: FingerPrintIcon,
   },
 ];
@@ -126,25 +126,6 @@ export default function Navbar() {
                         ) : (
                           <span>Connect Wallet</span>
                         )}
-                      </a>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        className={classNames(
-                          active
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-700",
-                          "group flex items-center px-4 py-2 text-sm"
-                        )}
-                      >
-                        <DocumentDuplicateIcon
-                          className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                        />
-                        Discover
                       </a>
                     )}
                   </Menu.Item>
@@ -317,13 +298,6 @@ export default function Navbar() {
               </Popover.Panel>
             </Transition>
           </Popover>
-
-          <Link
-            href="/discover"
-            className="text-sm font-semibold leading-6 text-black hover:text-black/80"
-          >
-            Discover
-          </Link>
 
           <Link
             href="/create-profile"

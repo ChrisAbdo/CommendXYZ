@@ -1,7 +1,23 @@
 import React from "react";
 import Image from "next/image";
+import { Listbox, Transition } from "@headlessui/react";
+import { useToast } from "@/hooks/ui/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAddress } from "@thirdweb-dev/react";
-import { InformationCircleIcon } from "@heroicons/react/20/solid";
+import {
+  InformationCircleIcon,
+  CheckIcon,
+  ChevronUpDownIcon,
+} from "@heroicons/react/20/solid";
 
 import Web3 from "web3";
 import Commend from "backend/build/contracts/Commend.json";
@@ -22,16 +38,33 @@ const client = ipfsClient.create({
   },
 });
 
+const people = [
+  { id: 1, name: "Software Engineer" },
+  { id: 2, name: "Product Manager" },
+  { id: 3, name: "Designer" },
+  { id: 4, name: "Marketing" },
+  { id: 5, name: "Sales" },
+  { id: 6, name: "Customer Support" },
+  { id: 7, name: "Other" },
+];
+
+function classNames(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export default function CreateProfile() {
   const address = useAddress();
   const [isValid, setIsValid] = React.useState(false);
   const [profileImage, setProfileImage] = React.useState<File | null>(null);
   const [formInput, updateFormInput] = React.useState({
     walletAddress: "",
+    role: "",
     coverImage: "",
   });
   const [addressListed, setAddressListed] = React.useState(false);
   const [fileUrl, setFileUrl] = React.useState(null);
+  const [selected, setSelected] = React.useState(people[0]);
+  const { toast } = useToast();
 
   React.useEffect(() => {
     checkListed();
@@ -63,19 +96,21 @@ export default function CreateProfile() {
         ...formInput,
         coverImage: url,
       });
+      setProfileImage(file);
     } catch (error) {
       console.log("Error uploading file: ", error);
     }
   }
 
   async function uploadToIPFS() {
-    const { walletAddress, coverImage } = formInput;
+    const { walletAddress, role, coverImage } = formInput;
     if (!walletAddress || !coverImage) {
       return;
     } else {
       // first, upload metadata to IPFS
       const data = JSON.stringify({
         walletAddress,
+        role,
         coverImage,
       });
       try {
@@ -91,6 +126,10 @@ export default function CreateProfile() {
   }
 
   async function listNFTForSale() {
+    toast({
+      title: "Creating profile...",
+      description: "Please confirm BOTH transactions in your wallet.",
+    });
     try {
       // @ts-ignore
       const web3 = new Web3(window.ethereum);
@@ -124,6 +163,11 @@ export default function CreateProfile() {
             .send({ from: accounts[0] })
             .on("receipt", function () {
               console.log("listed");
+              toast({
+                title: "Successfully created profile!",
+                description:
+                  "Your profile is now live. Find it in the commend page.",
+              });
             });
         });
     } catch (error) {
@@ -177,13 +221,13 @@ export default function CreateProfile() {
                 .
               </p>
               <p className="mt-3 text-sm md:mt-0 md:ml-6">
-                <a
-                  href="#"
+                <Link
+                  href="/commend"
                   className="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600"
                 >
                   Commend someone
                   <span aria-hidden="true"> &rarr;</span>
-                </a>
+                </Link>
               </p>
             </div>
           </div>
@@ -245,31 +289,45 @@ export default function CreateProfile() {
               </div>
             </div>
 
+            <Select
+              onValueChange={(value) =>
+                updateFormInput({ ...formInput, role: value })
+              }
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select your role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Roles</SelectLabel>
+                  <SelectItem value="Developer">Developer</SelectItem>
+                  <SelectItem value="Designer">Designer</SelectItem>
+                  <SelectItem value="Marketer">Marketer</SelectItem>
+                  <SelectItem value="Project Manager">
+                    Project Manager
+                  </SelectItem>
+                  <SelectItem value="Business Analyst">
+                    Business Analyst
+                  </SelectItem>
+                  <SelectItem value="Product Designer">
+                    Product Designer
+                  </SelectItem>
+                  <SelectItem value="Influencer">Influencer</SelectItem>
+                  <SelectItem value="Community Manager">
+                    Community Manager
+                  </SelectItem>
+                  <SelectItem value="Content Creator">
+                    Content Creator
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Profile Photo
               </label>
               <div className="mt-1 flex items-center space-x-5">
-                <span className="inline-block h-12 w-12 overflow-hidden rounded-full bg-gray-100">
-                  {profileImage ? (
-                    <Image
-                      src={URL.createObjectURL(profileImage)}
-                      alt="Profile Image"
-                      width={48}
-                      height={48}
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <svg
-                      className="h-full w-full text-gray-300"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                  )}
-                </span>
-
                 <input
                   type="file"
                   className="w-1/2 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -277,8 +335,6 @@ export default function CreateProfile() {
                   onChange={onChange}
                 />
               </div>
-
-              <button>Upload</button>
             </div>
 
             <div className="flex justify-end">

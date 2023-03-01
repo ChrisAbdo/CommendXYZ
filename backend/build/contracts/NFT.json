@@ -20082,8 +20082,8 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x018AC3c7083947c5Ec1EB3094f1400167e01ea47",
-      "transactionHash": "0x3d0ab3a2401279ff944cd6a04edf8c7dafca7460f010a8af630096cfca38bda3"
+      "address": "0x48CA2ffEb046D535555c0B34BDE97CE03F4e88d6",
+      "transactionHash": "0xb57b98cc386a9c6365cdd9950854cc48ae38519462d504292ccf05c1472fafeb"
     },
     "80001": {
       "events": {
@@ -20182,7 +20182,7 @@
     }
   },
   "schemaVersion": "3.4.12",
-  "updatedAt": "2023-02-28T06:23:19.201Z",
+  "updatedAt": "2023-03-01T01:52:50.994Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
