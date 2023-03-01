@@ -390,7 +390,7 @@ export default function Discover() {
                       key={index}
                       initial={{ y: -50, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      transition={{ duration: 0.2, delay: index * 0.1 }}
+                      transition={{ duration: 0.1, delay: index * 0.1 }}
                       className="py-4"
                     >
                       <div className="flex items-center space-x-4">
