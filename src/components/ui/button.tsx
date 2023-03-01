@@ -10,7 +10,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-indigo-600 text-white hover:bg-indigo-600/80 ",
         destructive: "bg-red-500 text-white hover:bg-red-600 ",
-        outline: "bg-transparent border border-slate-200 hover:bg-slate-100 ",
+        outline: "bg-transparent border border-gray-300 hover:bg-gray-100 ",
         subtle: "bg-slate-100 text-slate-900 hover:bg-slate-200 ",
         ghost:
           "bg-transparent hover:bg-slate-100  data-[state=open]:bg-transparent ",

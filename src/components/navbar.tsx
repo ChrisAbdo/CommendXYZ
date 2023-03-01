@@ -16,6 +16,7 @@ import {
   XMarkIcon,
   CheckIcon,
   LinkIcon,
+  QrCodeIcon,
 } from "@heroicons/react/24/outline";
 import {
   PhoneIcon,
@@ -23,11 +24,14 @@ import {
   ArchiveBoxIcon,
   ArrowRightCircleIcon,
   ChevronDownIcon,
+  PlusCircleIcon,
   DocumentDuplicateIcon,
   HeartIcon,
   PencilSquareIcon,
   TrashIcon,
   UserPlusIcon,
+  QueueListIcon,
+  WalletIcon,
 } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
@@ -67,7 +71,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="bg-white">
+    <header className="bg-white border-b border-gray-300">
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"
@@ -115,7 +119,7 @@ export default function Navbar() {
                           "group flex items-center px-4 py-2 text-sm"
                         )}
                       >
-                        <LinkIcon
+                        <WalletIcon
                           className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                           aria-hidden="true"
                         />
@@ -133,67 +137,8 @@ export default function Navbar() {
                 <div className="py-1">
                   <Menu.Item>
                     {({ active }) => (
-                      <a
-                        href="#"
-                        className={classNames(
-                          active
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-700",
-                          "group flex items-center px-4 py-2 text-sm"
-                        )}
-                      >
-                        <ArchiveBoxIcon
-                          className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                        />
-                        Commend
-                      </a>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        className={classNames(
-                          active
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-700",
-                          "group flex items-center px-4 py-2 text-sm"
-                        )}
-                      >
-                        <ArrowRightCircleIcon
-                          className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                        />
-                        Create Profile
-                      </a>
-                    )}
-                  </Menu.Item>
-                </div>
-                <div className="py-1">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        className={classNames(
-                          active
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-700",
-                          "group flex items-center px-4 py-2 text-sm"
-                        )}
-                      >
-                        <UserPlusIcon
-                          className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                        />
-                        Share
-                      </a>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
+                      <Link
+                        href="/commend"
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
@@ -205,16 +150,14 @@ export default function Navbar() {
                           className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                           aria-hidden="true"
                         />
-                        Add to favorites
-                      </a>
+                        Commend User
+                      </Link>
                     )}
                   </Menu.Item>
-                </div>
-                <div className="py-1">
                   <Menu.Item>
                     {({ active }) => (
-                      <a
-                        href="#"
+                      <Link
+                        href="/create-profile"
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
@@ -222,12 +165,31 @@ export default function Navbar() {
                           "group flex items-center px-4 py-2 text-sm"
                         )}
                       >
-                        <TrashIcon
+                        <PlusCircleIcon
                           className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                           aria-hidden="true"
                         />
-                        Delete
-                      </a>
+                        Create Profile
+                      </Link>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        href="/receive-commend"
+                        className={classNames(
+                          active
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-700",
+                          "group flex items-center px-4 py-2 text-sm"
+                        )}
+                      >
+                        <QrCodeIcon
+                          className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                          aria-hidden="true"
+                        />
+                        Receive Commend
+                      </Link>
                     )}
                   </Menu.Item>
                 </div>
@@ -472,7 +434,7 @@ export default function Navbar() {
                     >
                       Go back to dashboard
                     </button> */}
-                    <ConnectWallet accentColor="#4f46e5" />
+                    <ConnectWallet accentColor="#4f46e5" colorMode="light" />
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

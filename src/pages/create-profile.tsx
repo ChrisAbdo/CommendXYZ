@@ -1,23 +1,18 @@
 import React from "react";
 import Image from "next/image";
-import { Listbox, Transition } from "@headlessui/react";
 import { useToast } from "@/hooks/ui/use-toast";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectLabel,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { useAddress } from "@thirdweb-dev/react";
-import {
-  InformationCircleIcon,
-  CheckIcon,
-  ChevronUpDownIcon,
-} from "@heroicons/react/20/solid";
+import { InformationCircleIcon } from "@heroicons/react/20/solid";
 
 import Web3 from "web3";
 import Commend from "backend/build/contracts/Commend.json";
@@ -38,21 +33,8 @@ const client = ipfsClient.create({
   },
 });
 
-const people = [
-  { id: 1, name: "Software Engineer" },
-  { id: 2, name: "Product Manager" },
-  { id: 3, name: "Designer" },
-  { id: 4, name: "Marketing" },
-  { id: 5, name: "Sales" },
-  { id: 6, name: "Customer Support" },
-  { id: 7, name: "Other" },
-];
-
-function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function CreateProfile() {
+  const { toast } = useToast();
   const address = useAddress();
   const [isValid, setIsValid] = React.useState(false);
   const [profileImage, setProfileImage] = React.useState<File | null>(null);
@@ -63,8 +45,7 @@ export default function CreateProfile() {
   });
   const [addressListed, setAddressListed] = React.useState(false);
   const [fileUrl, setFileUrl] = React.useState(null);
-  const [selected, setSelected] = React.useState(people[0]);
-  const { toast } = useToast();
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     checkListed();
@@ -131,6 +112,7 @@ export default function CreateProfile() {
       description: "Please confirm BOTH transactions in your wallet.",
     });
     try {
+      setLoading(true);
       // @ts-ignore
       const web3 = new Web3(window.ethereum);
       const url = await uploadToIPFS();
@@ -168,6 +150,7 @@ export default function CreateProfile() {
                 description:
                   "Your profile is now live. Find it in the commend page.",
               });
+              setLoading(false);
             });
         });
     } catch (error) {
@@ -339,12 +322,41 @@ export default function CreateProfile() {
 
             <div className="flex justify-end">
               {addressListed ? null : (
-                <button
-                  onClick={listNFTForSale}
-                  className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  Create Profile
-                </button>
+                <>
+                  {loading ? (
+                    <Button
+                      variant="default"
+                      onClick={listNFTForSale}
+                      className="ml-3 inline-flex justify-center rounded-md border border-transparent text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      disabled={true}
+                    >
+                      {/* <Loader2 className="mr-2 h-4 w-4 animate-spin" /> */}
+                      <svg
+                        className="mr-2 h-4 w-4 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                      </svg>
+                      Creating...
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="default"
+                      onClick={listNFTForSale}
+                      className="ml-3 inline-flex justify-center rounded-md border border-transparent text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      Create Profile
+                    </Button>
+                  )}
+                </>
               )}
             </div>
           </div>

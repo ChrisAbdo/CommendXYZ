@@ -6,8 +6,17 @@ import NFT from "../../backend/build/contracts/NFT.json";
 import axios from "axios";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/ui/use-toast";
-
+import { Separator } from "@/components/ui/separator";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
@@ -49,7 +58,7 @@ export default function Discover() {
   const [commendCount, setCommendCount] = React.useState(0);
   const [commendDescription, setCommendDescription] = React.useState("");
   const [query, setQuery] = React.useState("");
-  const [ensName, setEnsName] = React.useState("");
+  const [roleQuery, setRoleQuery] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   const [open, setOpen] = React.useState(false);
@@ -61,9 +70,12 @@ export default function Discover() {
   const filteredItems =
     query === ""
       ? nfts
-      : nfts.filter((item) =>
-          // @ts-ignore
-          item.walletAddress.toLowerCase().includes(query.toLowerCase())
+      : nfts.filter(
+          (item) =>
+            // @ts-ignore
+            item.walletAddress.toLowerCase().includes(query.toLowerCase()) ||
+            // @ts-ignore
+            item.role.toLowerCase().includes(query.toLowerCase())
         );
 
   const { toast } = useToast();
@@ -183,19 +195,54 @@ export default function Discover() {
     }
   }
 
+  async function setQueryBySelect(select: any) {
+    setQuery(select);
+    toast({
+      // title: "Filtered by " + select,
+      // do the same thing but if select is empty, then say "All"
+      title: select ? "Filtered by " + select : "Showing all",
+    });
+  }
+
   return (
     <div>
-      <div className="lg:p-24 p-6">
-        {/* resolve ens */}
+      <div className="lg:p-12 p-6">
+        <div className="flex justify-between mb-4">
+          <Select onValueChange={setQueryBySelect}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Roles</SelectLabel>
+                <SelectItem value="">All</SelectItem>
+                <SelectItem value="Developer">Developer</SelectItem>
+                <SelectItem value="Designer">Designer</SelectItem>
+                <SelectItem value="Marketer">Marketer</SelectItem>
+                <SelectItem value="Project Manager">Project Manager</SelectItem>
+                <SelectItem value="Business Analyst">
+                  Business Analyst
+                </SelectItem>
+                <SelectItem value="Product Designer">
+                  Product Designer
+                </SelectItem>
+                <SelectItem value="Influencer">Influencer</SelectItem>
+                <SelectItem value="Community Manager">
+                  Community Manager
+                </SelectItem>
+                <SelectItem value="Content Creator">Content Creator</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-        <div className="flex justify-end">
-          <button
+          <Button
+            variant="outline"
             onClick={() => setEnsOpen(true)}
-            className="inline-flex items-center rounded-md border border-black bg-white px-2.5 py-1.5 text-sm font-medium leading-5 text-gray-700 shadow-sm transition duration-300 hover:bg-gray-100"
+            className="inline-flex items-center rounded-md  x-2.5 py-1.5 text-sm font-medium leading-5 shadow-sm transition duration-300"
           >
             {/* @ts-ignore */}
             Find / Resolve ENS
-          </button>
+          </Button>
         </div>
         {/* Resolve ENS Modal */}
         <Transition.Root show={ensOpen} as={React.Fragment}>
@@ -289,7 +336,7 @@ export default function Discover() {
               name="search"
               id="search"
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by wallet address..."
+              placeholder="Search by wallet address, role, or ENS..."
               className="block w-full rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             />
             <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
@@ -299,6 +346,41 @@ export default function Discover() {
             </div>
           </div>
         </div>
+
+        <div className="mt-6">
+          <Separator />
+        </div>
+
+        {roleQuery ? (
+          <div className="mt-4">
+            <span className="inline-flex items-center rounded-md bg-indigo-100 border border-indigo-200 py-0.5 pl-2.5 pr-1 text-sm font-medium text-black">
+              {roleQuery}
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setRoleQuery("");
+                }}
+                className="ml-0.5 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-md text-indigo-400 hover:bg-indigo-200 hover:text-indigo-500 focus:bg-indigo-500 focus:text-white focus:outline-none"
+              >
+                <span className="sr-only">Remove large option</span>
+                <svg
+                  className="h-2 w-2"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 8 8"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeWidth="1.5"
+                    d="M1 1l6 6m0-6L1 7"
+                  />
+                </svg>
+              </button>
+            </span>
+          </div>
+        ) : null}
+
         <div className="mt-6 flow-root">
           <ul role="list" className="-my-5 divide-y divide-gray-200">
             <AnimatePresence>
@@ -314,8 +396,7 @@ export default function Discover() {
                       <div className="flex items-center space-x-4">
                         <div className="flex-shrink-0">
                           <img
-                            className="h-8 w-8 rounded-full"
-                            // @ts-ignore
+                            className="lg:w-16 lg:h-16 w-8 h-8 rounded-md" // @ts-ignore
                             src={nft.coverImage}
                             alt=""
                           />
@@ -325,10 +406,23 @@ export default function Discover() {
                             {/* @ts-ignore */}
                             {nft.walletAddress}&nbsp;
                           </p>
-                          <span className="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800 border border-[#eaeaea]">
+                          <motion.span
+                            whileHover={{ scale: 1.05 }}
+                            onClick={() => {
+                              // @ts-ignore
+                              setQuery(nft.role);
+                              // @ts-ignore
+                              setRoleQuery(nft.role);
+                              toast({
+                                // @ts-ignore
+                                title: "Filtered by " + nft.role,
+                              });
+                            }}
+                            className="cursor-pointer inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800 border border-[#eaeaea]"
+                          >
                             {/* @ts-ignore */}
                             {nft.role}
-                          </span>
+                          </motion.span>
                         </div>
 
                         <div className="space-x-2">
@@ -625,7 +719,7 @@ export default function Discover() {
                       </Transition.Root>
                     </motion.li>
                   ))
-                : [...Array(5)].map((_, index) => (
+                : [...Array(3)].map((_, index) => (
                     <li className="py-4" key={index}>
                       <div className="flex items-center space-x-4">
                         <div className="flex-shrink-0">
