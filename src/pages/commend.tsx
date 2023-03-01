@@ -738,11 +738,6 @@ export default function Discover() {
             </AnimatePresence>
           </ul>
         </div>
-        <div className="mt-6">
-          <button className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition duration-200 hover:bg-gray-50">
-            Load More
-          </button>
-        </div>
       </div>
     </div>
   );
