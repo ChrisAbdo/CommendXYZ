@@ -395,10 +395,13 @@ export default function Discover() {
                     >
                       <div className="flex items-center space-x-4">
                         <div className="flex-shrink-0">
-                          <img
+                          <Image
                             className="lg:w-16 lg:h-16 w-8 h-8 rounded-md" // @ts-ignore
                             src={nft.coverImage}
                             alt=""
+                            width={64}
+                            height={64}
+                            priority
                           />
                         </div>
                         <div className="min-w-0 flex-1">
